@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { decrypt } from "@/lib/crypto";
 
 interface GitHubUser {
   login: string;
@@ -50,11 +51,19 @@ export async function GET(request: Request) {
     );
   }
 
+  let pat: string;
+  try {
+    pat = decrypt(settings.githubPAT);
+  } catch {
+    // Fallback for unencrypted legacy values
+    pat = settings.githubPAT;
+  }
+
   const { searchParams } = new URL(request.url);
   const endpoint = searchParams.get("endpoint") || "overview";
 
   const headers: HeadersInit = {
-    Authorization: `Bearer ${settings.githubPAT}`,
+    Authorization: `Bearer ${pat}`,
     Accept: "application/vnd.github.v3+json",
     "User-Agent": "DevPulse",
   };

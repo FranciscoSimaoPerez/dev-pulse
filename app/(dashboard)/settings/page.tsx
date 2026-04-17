@@ -196,7 +196,7 @@ export default function SettingsPage() {
                 htmlFor="openWeatherKey"
                 className="mb-1 block text-sm font-medium text-foreground"
               >
-                OpenWeatherMap API Key
+                WeatherAPI Key
               </label>
               <input
                 id="openWeatherKey"
@@ -206,6 +206,9 @@ export default function SettingsPage() {
                 placeholder="your-api-key"
                 className="w-full rounded-lg border border-card-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               />
+              <p className="mt-1 text-xs text-muted">
+                Get a free key at weatherapi.com
+              </p>
             </div>
           </div>
         </fieldset>

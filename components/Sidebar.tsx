@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOutAction } from "@/app/(dashboard)/actions";
@@ -42,9 +43,10 @@ interface SidebarProps {
 
 export default function Sidebar({ userName, userEmail }: SidebarProps) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <aside className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar-bg">
+  const sidebarContent = (
+    <>
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
@@ -63,6 +65,7 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-accent/10 text-accent"
@@ -103,6 +106,43 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
           </button>
         </form>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger button */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed left-4 top-4 z-40 rounded-lg border border-card-border bg-card-bg p-2 text-foreground shadow-sm md:hidden"
+        aria-label="Open menu"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-sidebar-border bg-sidebar-bg transition-transform duration-200 md:hidden ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden h-full w-64 flex-col border-r border-sidebar-border bg-sidebar-bg md:flex">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

@@ -136,6 +136,9 @@ The Prisma schema defines four models and two enums:
 - Each widget handles its own loading, error, and empty states independently.
 - Keep components focused — one widget per file, no mega-components.
 
+### Hooks 
+- Create hooks to prevent having repetitive code in the project.
+
 ### Security
 - **NEVER expose API keys or PATs to the client.** All secrets stay server-side (env vars or DB, accessed only in API routes / Server Components).
 - GitHub PATs stored in UserSettings should be encrypted with `AES-256-GCM` using an `ENCRYPTION_KEY` env var before persisting to the database.
