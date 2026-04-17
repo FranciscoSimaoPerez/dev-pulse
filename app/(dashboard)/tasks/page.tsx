@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useReducer } from "react";
 import TaskModal from "@/components/TaskModal";
 
 interface Project {
@@ -52,31 +52,41 @@ export default function TasksPage() {
   const [newProjectName, setNewProjectName] = useState("");
   const [newProjectColor, setNewProjectColor] = useState("#6366f1");
   const [showProjectForm, setShowProjectForm] = useState(false);
-
-  const fetchData = useCallback(async () => {
-    const [tasksRes, projectsRes] = await Promise.all([
-      fetch("/api/tasks"),
-      fetch("/api/projects"),
-    ]);
-
-    if (tasksRes.ok) {
-      const { data } = await tasksRes.json();
-      setTasks(data);
-    }
-    if (projectsRes.ok) {
-      const { data } = await projectsRes.json();
-      setProjects(data);
-    }
-    setLoading(false);
-  }, []);
+  const [refreshKey, incrementRefresh] = useReducer((c: number) => c + 1, 0);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    let cancelled = false;
+
+    async function load() {
+      const [tasksRes, projectsRes] = await Promise.all([
+        fetch("/api/tasks"),
+        fetch("/api/projects"),
+      ]);
+
+      if (cancelled) return;
+
+      if (tasksRes.ok) {
+        const { data } = await tasksRes.json();
+        setTasks(data);
+      }
+      if (projectsRes.ok) {
+        const { data } = await projectsRes.json();
+        setProjects(data);
+      }
+      setLoading(false);
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, [refreshKey]);
+
+  function refetch() {
+    incrementRefresh();
+  }
 
   async function handleDelete(id: string) {
     await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    fetchData();
+    refetch();
   }
 
   async function handleToggleStatus(task: Task) {
@@ -86,7 +96,7 @@ export default function TasksPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus }),
     });
-    fetchData();
+    refetch();
   }
 
   async function handleCreateProject(e: React.FormEvent) {
@@ -103,14 +113,14 @@ export default function TasksPage() {
       setNewProjectName("");
       setNewProjectColor("#6366f1");
       setShowProjectForm(false);
-      fetchData();
+      refetch();
     }
   }
 
   async function handleDeleteProject(id: string) {
     await fetch(`/api/projects/${id}`, { method: "DELETE" });
     if (filterProject === id) setFilterProject("ALL");
-    fetchData();
+    refetch();
   }
 
   const filtered = tasks.filter((t) => {
@@ -350,7 +360,7 @@ export default function TasksPage() {
           task={editingTask}
           projects={projects}
           onClose={() => { setModalOpen(false); setEditingTask(null); }}
-          onSaved={() => { setModalOpen(false); setEditingTask(null); fetchData(); }}
+          onSaved={() => { setModalOpen(false); setEditingTask(null); refetch(); }}
         />
       )}
     </div>

@@ -25,6 +25,7 @@
 - No `any`, no `@ts-ignore`, no `eslint-disable` without justification.
 - Keep files focused — one component/route handler per file.
 - Validate input at system boundaries (API routes), not deep in business logic.
+- Create hooks and wrappers to prevent repetitive code.
 
 ## When Making Changes
 

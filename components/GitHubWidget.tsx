@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 
 interface GitHubUser {
   login: string;
@@ -173,10 +174,13 @@ export default function GitHubWidget() {
 
       {/* Profile header */}
       <div className="mb-4 flex items-center gap-3">
-        <img
+        <Image
           src={user.avatar_url}
           alt={user.login}
+          width={40}
+          height={40}
           className="h-10 w-10 rounded-full"
+          unoptimized
         />
         <div className="min-w-0 flex-1">
           <a
