@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import TasksWidget from "@/components/TasksWidget";
+import GitHubWidget from "@/components/GitHubWidget";
 
 function WidgetSkeleton({ title }: { title: string }) {
   return (
@@ -35,7 +36,7 @@ export default async function DashboardPage() {
       {/* Widget grid */}
       <div className="grid gap-6 md:grid-cols-2">
         <TasksWidget />
-        <WidgetSkeleton title="GitHub" />
+        <GitHubWidget />
         <WidgetSkeleton title="Weather" />
         <WidgetSkeleton title="News" />
       </div>
