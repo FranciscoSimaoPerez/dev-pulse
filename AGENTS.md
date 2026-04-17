@@ -12,7 +12,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 DevPulse is a **private, single-user authenticated developer dashboard** built on Next.js 16 (App Router). It aggregates:
 - **GitHub activity** via Personal Access Token (PAT)
-- **Personal task management** with Prisma + PostgreSQL
+- **Personal task management** with Prisma + SQLite/libsql
 - **Daily focus feed** from OpenWeatherMap + NewsAPI
 
 ## Tech Stack
@@ -24,7 +24,7 @@ DevPulse is a **private, single-user authenticated developer dashboard** built o
 | React          | React 19                                 |
 | Styling        | Tailwind CSS 4 (pure — no component library) |
 | Auth           | NextAuth v5 (Auth.js) — Credentials provider |
-| Database       | Prisma ORM + Neon PostgreSQL (SQLite for local dev) |
+| Database       | Prisma ORM + libsql (`@prisma/adapter-libsql`) — local SQLite file, Turso-compatible remote in prod |
 | Deployment     | Vercel                                   |
 
 ## Critical Next.js 16 Rules
@@ -151,8 +151,8 @@ The Prisma schema defines four models and two enums:
 
 ```env
 # Database
-DATABASE_URL="postgresql://..."      # Neon connection string (prod)
-# DATABASE_URL="file:./dev.db"       # SQLite (local dev)
+DATABASE_URL="libsql://your-db.turso.io"   # Turso/libsql remote URL (prod)
+# DATABASE_URL="file:./dev.db"              # SQLite local file (local dev)
 
 # Auth
 AUTH_SECRET="..."                     # NextAuth secret (generate with `openssl rand -base64 32`)

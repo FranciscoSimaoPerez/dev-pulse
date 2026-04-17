@@ -13,7 +13,7 @@
 - This is **Next.js 16** — `proxy.ts` NOT `middleware.ts`, all request APIs are async (`await cookies()`, `await params`), Turbopack is default.
 - Auth uses **NextAuth v5 (`next-auth@beta`)** with Credentials provider — NOT OAuth, NOT NextAuth v4.
 - GitHub data comes from a **PAT stored in UserSettings DB** — NOT from an OAuth flow.
-- Database is **Prisma + PostgreSQL (Neon)** in production, **SQLite** for local dev.
+- Database is **Prisma + SQLite/libsql** (`@prisma/adapter-libsql`) — local dev uses a local SQLite file; production uses a libsql-compatible remote (e.g., Turso).
 - UI is **pure Tailwind CSS 4** — do NOT install or suggest shadcn, Radix, MUI, or any component library.
 - All external API calls (GitHub, Weather, News) go through **server-side API route proxies** — never from the client.
 
