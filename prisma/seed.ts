@@ -44,7 +44,6 @@ async function main() {
     });
 
     console.log(`Created user: ${user.email} (id: ${user.id})`);
-    console.log(`Password: ${password}`);
     console.log(`\nYou can now sign in at /login`);
   } finally {
     await prisma.$disconnect();

@@ -3,8 +3,8 @@ import { auth } from "@/auth";
 
 const publicRoutes = ["/login", "/api/auth"];
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
 
   const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
 
@@ -12,14 +12,16 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  if (!req.auth) {
-    const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
+  const session = await auth();
+
+  if (!session) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname + search);
     return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
