@@ -12,10 +12,19 @@ async function main() {
   const prisma = createPrisma();
 
   try {
-    const email = process.env.SEED_EMAIL || "admin@devpulse.local";
-    const password = process.env.SEED_PASSWORD || "devpulse123";
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Refusing to run seed script in production.");
+    }
+
+    const email = process.env.SEED_EMAIL;
+    const password = process.env.SEED_PASSWORD;
     const name = process.env.SEED_NAME || "Admin";
 
+    if (!email || !password) {
+      throw new Error(
+        "SEED_EMAIL and SEED_PASSWORD must be set to run the seed script."
+      );
+    }
     const existing = await prisma.user.findUnique({ where: { email } });
 
     if (existing) {
